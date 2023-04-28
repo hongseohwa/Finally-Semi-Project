@@ -60,7 +60,7 @@ message_response NUMBER REFERENCES member(member_num) ON DELETE CASCADE, -- 메�
 message_content varchar(2000)
 );
 
-CREATE TABLE qna_board (
+CREATE TABLE qna_board ( -- 고객센터 테이블
 qna_num NUMBER PRIMARY KEY, -- 글 번호
 qna_title VARCHAR2(50) NOT NULL, -- 글 제목
 qna_head VARCHAR2(50), -- 글 말머리
@@ -73,7 +73,7 @@ qna_content VARCHAR2(1500), -- 글 내용
 qna_pwd varchar2(50) NOT NULL -- 글 비밀번호
 );
 
-create table qna_reply(
+create table qna_reply( -- 고객센터 댓글 테이블
 qna_rno number(7) PRIMARY KEY, -- 답변 글 번호
 qna_bno number(7) REFERENCES qna_board(qna_num) ON DELETE CASCADE, -- 원글 번호
 qna_rewriter varchar2(30) NOT NULL, -- 답변 글 작성자

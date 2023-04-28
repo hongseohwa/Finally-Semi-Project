@@ -1,0 +1,83 @@
+CREATE TABLE animal ( -- 동물정보 테이블
+animal_num NUMBER PRIMARY KEY, -- 동물 개인 번호
+animal_name VARCHAR2(50) NOT NULL, -- 동물 이름
+animal_age NUMBER default 0 NOT NULL, -- 동물 나이
+animal_race VARCHAR2(50) NOT NULL, -- 동물 품종
+animal_gender VARCHAR2(50) NOT NULL, -- 동물 성별
+animal_type VARCHAR2(50) NOT NULL, -- 동물 타입(강아지, 고양이)
+animal_image varchar(100) -- 동물 이미지
+);
+
+CREATE TABLE member ( -- 회원정보 테이블
+member_num NUMBER PRIMARY KEY, -- 회원 번호
+member_age NUMBER default 0 NOT NULL, -- 회원 나이
+member_name VARCHAR2(50) NOT NULL, -- 회원 이름
+member_phone VARCHAR2(50) NOT NULL, -- 회원 전화번호
+member_email VARCHAR2(50) , -- 회원 이메일
+member_addr1 VARCHAR2(50) NOT NULL, -- 회원 주소1
+member_addr2 VARCHAR2(50) NOT NULL, -- 회원 주소2
+member_addr3 VARCHAR2(50), -- 회원 주소3
+member_self VARCHAR2(50) , -- 회원 자기소개
+member_nick VARCHAR2(50) UNIQUE, -- 회원 닉네임
+member_gender VARCHAR2(50) NOT NULL, -- 회원 성별
+member_animal1 NUMBER REFERENCES animal(animal_num) ON DELETE SET NULL, -- 회원 동물1
+member_animal2 NUMBER REFERENCES animal(animal_num) ON DELETE SET NULL, -- 회원 동물2
+member_animal3 NUMBER REFERENCES animal(animal_num) ON DELETE SET NULL, -- 회원 동물3
+member_id VARCHAR(50) NOT NULL, -- 회원 아이디
+member_pwd VARCHAR(50) NOT NULL -- 회원 비밀번호
+);
+
+CREATE TABLE map_board ( -- 지역별 게시판 테이블
+board_num NUMBER PRIMARY KEY, -- 글 번호
+board_title VARCHAR2(50) NOT NULL, -- 글 제목
+board_head VARCHAR2(50), -- 글 말머리
+board_hit NUMBER default 0, -- 글 조회수
+board_like NUMBER default 0, -- 글 추천
+board_writer NUMBER REFERENCES member(member_num) ON DELETE CASCADE, -- 글 작성자
+board_regdate DATE, -- 글 작성일자
+board_file VARCHAR2(50), -- 글 첨부파일
+board_text VARCHAR2(1500), -- 글 내용
+board_area VARCHAR(50) -- 지역 이름
+);
+
+create table map_board_like( -- 지역별 게시판 좋아요 기능 테이블
+  board_num number REFERENCES map_board(board_num), -- 지역별 게시판 글 번호
+  member_num number REFERENCES member(member_num) -- 게시글 작성자 회원 번호
+);
+
+CREATE TABLE friend ( -- 친구 테이블
+friend_num NUMBER PRIMARY KEY, -- 친구 번호
+friend_request NUMBER REFERENCES member(member_num) ON DELETE CASCADE, -- 친구 요청 건 사람
+friend_response NUMBER REFERENCES member(member_num) ON DELETE CASCADE, -- 친구 요청 받은 사람
+request_wait VARCHAR2(5), -- 신청 대기
+request_accept VARCHAR2(5) -- 신청 수락
+);
+
+CREATE TABLE message ( -- 친구 메세지 테이블
+message_num NUMBER PRIMARY KEY, -- 메세지 1개의 번호
+message_request NUMBER REFERENCES member(member_num) ON DELETE CASCADE, -- 메세지 보낸 사람
+message_response NUMBER REFERENCES member(member_num) ON DELETE CASCADE, -- 메세지 받은 사람
+message_content varchar(2000)
+);
+
+CREATE TABLE qna_board (
+qna_num NUMBER PRIMARY KEY, -- 글 번호
+qna_title VARCHAR2(50) NOT NULL, -- 글 제목
+qna_head VARCHAR2(50), -- 글 말머리
+qna_hit NUMBER default 0, -- 글 조회수
+qna_writer NUMBER REFERENCES member(member_num) ON DELETE CASCADE, -- 글 작성자
+qna_regdate DATE, -- 글 작성일자
+qna_update DATE, -- 글 수정일자
+qna_file VARCHAR2(50), -- 글 첨부파일
+qna_content VARCHAR2(1500), -- 글 내용
+qna_pwd varchar2(50) NOT NULL -- 글 비밀번호
+);
+
+create table qna_reply(
+qna_rno number(7) PRIMARY KEY, -- 답변 글 번호
+qna_bno number(7) REFERENCES qna_board(qna_num) ON DELETE CASCADE, -- 원글 번호
+qna_rewriter varchar2(30) NOT NULL, -- 답변 글 작성자
+qna_recont varchar2(1000) NOT NULL, -- 답변 글 내용
+qna_redate DATE, -- 답변 글 작성일자
+qna_reupdate DATE -- 답변 글 수정일자
+);
